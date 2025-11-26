@@ -93,6 +93,9 @@ android {
 
         debug {
             signingConfig signingConfigs.debug
+            // Allow side-by-side installs for testing by using a distinct application id.
+            applicationIdSuffix ".foldtest"
+            versionNameSuffix "-foldtest"
         }
     }
 
