@@ -96,6 +96,8 @@ android {
             // Allow side-by-side installs for testing by using a distinct application id.
             applicationIdSuffix ".foldtest"
             versionNameSuffix "-foldtest"
+            // Differentiate the launcher label for the side-by-side debug build.
+            resValue "string", "application_name", "Termux Foldtest"
         }
     }
 
