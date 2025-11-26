@@ -39,10 +39,17 @@ public final class TerminalRenderer {
 
         mTextPaint.setTypeface(typeface);
         mTextPaint.setAntiAlias(true);
+        mTextPaint.setSubpixelText(true);
+        mTextPaint.setLinearText(true);
         mTextPaint.setTextSize(textSize);
 
-        mFontLineSpacing = (int) Math.ceil(mTextPaint.getFontSpacing());
-        mFontAscent = (int) Math.ceil(mTextPaint.ascent());
+        Paint.FontMetricsInt fontMetrics = mTextPaint.getFontMetricsInt();
+        int glyphHeight = fontMetrics.descent - fontMetrics.ascent;
+        int recommendedSpacing = (int) Math.ceil(mTextPaint.getFontSpacing());
+        // Guard against devices/fonts that report undersized spacing by ensuring we never pick
+        // a line height smaller than the actual glyph box.
+        mFontLineSpacing = Math.max(1, Math.max(recommendedSpacing, glyphHeight));
+        mFontAscent = fontMetrics.ascent;
         mFontLineSpacingAndAscent = mFontLineSpacing + mFontAscent;
         mFontWidth = mTextPaint.measureText("X");
 
@@ -66,8 +73,9 @@ public final class TerminalRenderer {
         final int[] palette = mEmulator.mColors.mCurrentColors;
         final int cursorShape = mEmulator.getCursorStyle();
 
-        if (reverseVideo)
-            canvas.drawColor(palette[TextStyle.COLOR_INDEX_FOREGROUND], PorterDuff.Mode.SRC);
+        int baseBackgroundColor = reverseVideo ? palette[TextStyle.COLOR_INDEX_FOREGROUND] : palette[TextStyle.COLOR_INDEX_BACKGROUND];
+        // Always repaint the background to avoid ghosted rows after font/size changes or window resizes.
+        canvas.drawColor(baseBackgroundColor, PorterDuff.Mode.SRC);
 
         float heightOffset = mFontLineSpacingAndAscent;
         for (int row = topRow; row < endRow; row++) {
