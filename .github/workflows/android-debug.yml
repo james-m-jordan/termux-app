@@ -42,10 +42,15 @@ jobs:
             "ndk;23.1.7779620"
 
       - name: Build debug APK
+        env:
+          TERMUX_PACKAGE_VARIANT: apt-android-7
         run: ./gradlew :app:assembleDebug
 
-      - name: Upload debug APK artifact
+      - name: Upload universal & arm64 debug APKs
         uses: actions/upload-artifact@v4
         with:
-          name: termux-app-debug-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: termux-app-debug-apks
+          path: |
+            app/build/outputs/apk/debug/termux-app_apt-android-7-debug_universal.apk
+            app/build/outputs/apk/debug/termux-app_apt-android-7-debug_arm64-v8a.apk
+            app/build/outputs/apk/debug/output-metadata.json
