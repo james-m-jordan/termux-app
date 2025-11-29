@@ -96,6 +96,8 @@ android {
             // Allow side-by-side installs for testing by using a distinct application id.
             applicationIdSuffix ".foldtest"
             versionNameSuffix "-foldtest"
+            // Avoid sharedUserId collision with the stock Termux build.
+            manifestPlaceholders.TERMUX_PACKAGE_NAME = "com.termux.foldtest"
         }
     }
 
